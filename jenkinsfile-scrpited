@@ -17,15 +17,14 @@ node {
     checkout([$class: 'GitSCM', 
         branches: [[name: '*/master']], 
         doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
-        userRemoteConfigs: [[url: 'C:\Project\Maven-petclinic-project']]])
+        userRemoteConfigs: [[url: 'https://github.com/ganeshhp/Maven-petclinic-project.git']]])
  }
  stage ('Build_Test and Package') {
     sh 'mvn clean verify package'
 //    junit 'target/surefire-reports/TEST*.xml'
  }
-
- parallel {
- stage ('publish test results') {
+ 
+ stage ('Archive and Notify') {
     publishHTML(target: [allowMissing: true, 
                  alwaysLinkToLastBuild: false, 
                  keepAll: true, 
@@ -33,16 +32,13 @@ node {
                  reportFiles: 'index.html', 
                  reportName: 'HTML Report', 
                  reportTitles: 'Code Coverage-Report'])
- }
- stage ('archive') {
+
     archiveArtifacts 'target/*.war' 
     step([$class: 'Mailer', 
         notifyEveryUnstableBuild: true, 
         recipients: 'cc:ganesh@automationfactory.in', 
         sendToIndividuals: false])
-    }
  }
- 
  notify ('Waiting for Deployment')
  
  input 'Deploy to Staging?'

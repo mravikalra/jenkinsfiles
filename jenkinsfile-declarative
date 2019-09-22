@@ -46,7 +46,8 @@ pipeline {
                     userRemoteConfigs: [[url: 'https://github.com/ganeshhp/helloworldweb.git']]])
             }
         }
-      stage('Build'){
+     parallel {
+	  stage('Build'){
           agent { label "node1" }
 			steps {
                 sh 'mvn -f pom.xml clean package'
@@ -61,6 +62,7 @@ pipeline {
             }
         }
 	}
+ }
 	  stage('Deploy') {
           agent { label "node2" }
 			steps {
