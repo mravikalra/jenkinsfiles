@@ -1,0 +1,22 @@
+
+# replication controller config
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: hello-apache-rc
+spec:
+  replicas: 5
+  selector:
+    app: hello-apache
+
+# pod configuration (selector app matches the app mentioned in the pod config)
+  template:
+    metadata:
+      labels:
+        app: hello-apache
+    spec:
+      containers:
+      - name: hello-apache-pod
+        image: httpd:latest
+        ports:
+        - containerPort: 80
